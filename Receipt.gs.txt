@@ -1,0 +1,129 @@
+function Receipt() {
+  // Access the user properties service to retrieve stored transaction details
+  var userProperties = PropertiesService.getUserProperties();
+
+  // Retrieve the stored card number from user properties
+  var card = userProperties.getProperty('Card_No');
+
+  // Mask part of the card number for security, keeping first 7 digits and last 4 visible
+  card = card.substring(0, 7) + '**' + card.substring(card.length - 4);
+
+  // Retrieve stored client name
+  var name = userProperties.getProperty('Name');
+
+  // Get the current date and time of the transaction
+  var date = new Date();
+
+  // Retrieve the transaction amount from user properties
+  var amount = userProperties.getProperty('Amount');
+
+  // Retrieve the available balance before the transaction
+  var balance = userProperties.getProperty('Balance');
+
+  // Create the HTML email message structure
+  var msg = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transaction Details</title>
+        <style>
+            /* General styles for the email */
+            body {
+                font-family: Georgia, serif;
+                line-height: 1.6;
+                background-color: #f4f4f4;
+                padding: 20px;
+            }
+            .container {
+                width: 600px;
+                margin: 0 auto;
+                background-color: #333; /* Darker background for the inner box */
+                color: #fff; /* Change text color to white for contrast */
+                border: 2px solid #222; /* Darker border */
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Darker shadow */
+                border-radius: 8px; /* Slightly rounded corners */
+            }
+            .table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+            .table th, .table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .table th {
+                background-color: #f4b41a;
+                color: #000;
+            }
+            a {
+                color: #0073e6;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <p>Dear Valued Cardholder,</p>
+            <p>Thank you for banking with Tota Bank PLC. You have performed the following transaction, details stated below:</p>
+            <table class="table">
+                <tr>
+                    <th>Particulars</th>
+                    <th>Transaction Details</th>
+                </tr>
+                <tr>
+                    <td>Card Number</td>
+                    <td>${card}</td>
+                </tr>
+                <tr>
+                    <td>Client Name</td>
+                    <td>${name}</td>
+                </tr>
+                <tr>
+                    <td>Transaction Date</td>
+                    <td>${date}</td>
+                </tr>
+                <tr>
+                    <td>Transaction Amount</td>
+                    <td>${amount}</td>
+                </tr>
+                <tr>
+                    <td>Transaction Currency</td>
+                    <td>BDT</td>
+                </tr>
+                <tr>
+                    <td>Transaction Type</td>
+                    <td>PURCHASE</td>
+                </tr>
+                <tr>
+                    <td>Merchant Name</td>
+                    <td>Testing</td>
+                </tr>
+                <tr>
+                    <td>Available Amount</td>
+                    <td>Your Card ${card} Balance BDT ${balance - amount}</td>
+                </tr>
+            </table>
+            <p>For any queries, please forward to TBL 24x7 Contact Center through below channels:</p>
+            <ul>
+                <li>Phone: 16969 (from any mobile within Bangladesh), <a href="tel:+8801747107767">+88-017-471-07767</a> (from anywhere in the world)</li>
+                <li>TBL Query: <a href="https://touhidul.com/" target="_blank">https://touhidul.com/</a></li>
+            </ul>
+            <p>For more information on TBL products and services, please visit EBL website: <a href="https://touhidul.com/" target="_blank">www.touhidul.com</a></p>
+            <p>You can also find us on Facebook at <a href="https://www.facebook.com/touhidul.14.11.99" target="_blank">www.facebook.com/touhidul.14.11.99</a> where you will get latest information on TBL.</p>
+            <p>Best Regards,<br>TBL Cards Team.</p>
+        </div>
+    </body>
+    </html>
+  `;
+
+  // Return the formatted HTML email message
+  return msg;
+}

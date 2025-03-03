@@ -1,0 +1,31 @@
+function validateCaptcha(answer) {
+  // Access the user properties service to retrieve stored values
+  var userProperties = PropertiesService.getUserProperties();
+
+  // Retrieve the first number of the captcha from user properties and convert it to an integer
+  const n1 = parseInt(userProperties.getProperty('captcha_n1'));
+  
+  // Retrieve the second number of the captcha from user properties and convert it to an integer
+  const n2 = parseInt(userProperties.getProperty('captcha_n2'));
+  
+  // Retrieve the stored mathematical operator used in the captcha
+  const operator = userProperties.getProperty('captcha_operator');
+  
+  let expectedResult;
+
+  // Calculate the expected result based on the stored operator
+  switch (operator) {
+    case '+': // If the operator is addition
+      expectedResult = n1 + n2;
+      break;
+    case '-': // If the operator is subtraction
+      expectedResult = n1 - n2;
+      break;
+    case '×': // If the operator is multiplication
+      expectedResult = n1 * n2;
+      break;
+  }
+
+  // Compare the provided answer with the expected result and return true if they match
+  return parseInt(answer) === expectedResult;
+}

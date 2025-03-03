@@ -1,0 +1,10 @@
+function getUserInput(name, card, month, year, cvv) {
+  // Return an object containing the user's input details
+  return {
+    Name: name,   // Store the provided name
+    Card: card,   // Store the provided card number
+    Month: month, // Store the provided expiration month
+    Year: year,   // Store the provided expiration year
+    CVV: cvv,     // Store the provided CVV code
+  };
+}

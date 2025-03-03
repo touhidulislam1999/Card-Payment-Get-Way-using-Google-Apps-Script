@@ -1,0 +1,10 @@
+// Function to create saved card users
+function SavedCards(Card) {
+  return [
+    // Creating a new card instance with cardholder's name, card number, expiry month, expiry year, and CVV
+    new Card("MD TOUHIDUL ISLAM", "1234432156788765", "July", "2024", "122"),
+    new Card("ELON MUSK", "4685650400388521", "October", "2025", "524"),
+    new Card("DONALD J. TRUMP", "4628696917329711", "February", "2027", "153"),
+  ];
+}
+

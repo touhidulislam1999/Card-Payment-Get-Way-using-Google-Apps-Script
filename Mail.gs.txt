@@ -1,0 +1,9 @@
+function Send_Mail(mail, subject, msg, name) {
+  // Uses Google Apps Script MailApp service to send an email
+  MailApp.sendEmail({
+    to: mail,       // Recipient email address
+    subject: subject,  // Email subject line
+    htmlBody: msg,  // Email content in HTML format
+    name: name      // Sender name displayed in the email
+  });
+}

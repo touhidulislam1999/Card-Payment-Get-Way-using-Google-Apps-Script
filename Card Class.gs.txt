@@ -1,0 +1,28 @@
+// Class Definition
+function CardClass() {
+  return class Card {
+    // Constructor to initialize card details
+    constructor(name_on_card, card_no, exp_month, exp_year, cvv) {
+      this.Name = name_on_card;  // Store the cardholder's name
+      this.Card = card_no;       // Store the card number
+      this.Month = exp_month;    // Store the expiration month
+      this.Year = exp_year;      // Store the expiration year
+      this.CVV = cvv;            // Store the CVV (security code)
+    }
+
+    // Static method to verify card details
+    static verifyUser(name_on_card, card_no, exp_month, exp_year, cvv, cardUsers) {
+      // Find a user in the cardUsers array that matches the provided card details
+      const user = cardUsers.find((u) =>
+        u.Name === name_on_card &&   // Match the cardholder's name
+        u.Card === card_no &&        // Match the card number
+        u.Month === exp_month &&     // Match the expiration month
+        u.Year === exp_year &&       // Match the expiration year
+        u.CVV === cvv                // Match the CVV
+      );
+
+      // Return true if a match is found, otherwise return false
+      return user ? true : false;
+    }
+  };
+}

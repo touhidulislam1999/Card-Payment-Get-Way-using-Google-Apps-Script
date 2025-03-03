@@ -1,0 +1,55 @@
+function generate_OTP() {
+  // Generate a random 4-digit OTP
+  // Math.random() generates a random decimal between 0 and 1
+  // Multiplying by 9000 scales it to a range between 0 and 9000
+  // Adding 1000 ensures the minimum value is 1000 (so it's always a 4-digit number)
+  // Math.floor() rounds the value down to the nearest integer
+  var otp = Math.floor(1000 + Math.random() * 9000); 
+  
+  // Return the generated OTP
+  return otp;
+}
+
+function getUserInput(name, card, month, year, cvv) {
+  // Return an object containing the user's input details
+  return {
+    Name: name,   // Store the provided name
+    Card: card,   // Store the provided card number
+    Month: month, // Store the provided expiration month
+    Year: year,   // Store the provided expiration year
+    CVV: cvv,     // Store the provided CVV code
+  };
+}
+
+function Send_Mail(mail, subject, msg, name) {
+  // Uses Google Apps Script MailApp service to send an email
+  MailApp.sendEmail({
+    to: mail,       // Recipient email address
+    subject: subject,  // Email subject line
+    htmlBody: msg,  // Email content in HTML format
+    name: name      // Sender name displayed in the email
+  });
+}
+
+// Function to create saved card users
+function SavedCards(Card) {
+  return [
+    // Creating a new card instance with cardholder's name, card number, expiry month, expiry year, and CVV
+    new Card("MD TOUHIDUL ISLAM", "1234432156788765", "July", "2024", "122"),
+    new Card("ELON MUSK", "4685650400388521", "October", "2025", "524"),
+    new Card("DONALD J. TRUMP", "4628696917329711", "February", "2027", "153"),
+  ];
+}
+
+function Verify_Card(input, savecards, Card) {
+  // Calls the 'verifyUser' method from the 'Card' object to verify the user's card details
+  // The method is passed the user's input details:
+  // - input.Name: The name of the cardholder
+  // - input.Card: The card number
+  // - input.Month: The expiration month of the card
+  // - input.Year: The expiration year of the card
+  // - input.CVV: The card's security code
+  // - savecards: A flag indicating whether to save the card details for future use
+  
+  return Card.verifyUser(input.Name, input.Card, input.Month, input.Year, input.CVV, savecards); 
+}

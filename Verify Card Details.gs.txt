@@ -1,0 +1,12 @@
+function Verify_Card(input, savecards, Card) {
+  // Calls the 'verifyUser' method from the 'Card' object to verify the user's card details
+  // The method is passed the user's input details:
+  // - input.Name: The name of the cardholder
+  // - input.Card: The card number
+  // - input.Month: The expiration month of the card
+  // - input.Year: The expiration year of the card
+  // - input.CVV: The card's security code
+  // - savecards: A flag indicating whether to save the card details for future use
+  
+  return Card.verifyUser(input.Name, input.Card, input.Month, input.Year, input.CVV, savecards); 
+}

@@ -1,0 +1,34 @@
+function verify_otp(entered_otp){
+  // Access user properties to retrieve stored data
+  var userProperties = PropertiesService.getUserProperties();
+
+  // Define the transaction amount to be deducted
+  var cut_amount = 69.69;
+
+  // Check if the entered OTP matches the stored OTP (rounded down)
+  if (entered_otp == Math.floor(userProperties.getProperty('otp'))) {
+    
+    // Verify if the card has a sufficient balance and deduct the amount if valid
+    if (validBalance(userProperties.getProperty('Card_No'), cut_amount)) {
+      
+      // Send an email notification for a successful transaction
+      Send_Mail('YOUR MAIL', 'TBL Transaction Alert', Receipt(), 'Tota Bank PLC.');
+
+      // Return true indicating a successful transaction
+      return true;
+
+      // The next line is unreachable since 'return true;' exits the function, 
+      // so 'userProperties.deleteProperty('otp');' will never execute.
+      // return HtmlService.createHtmlOutputFromFile('Success Page.html').getContent();
+      userProperties.deleteProperty('otp'); // This line will never be executed
+
+    } else {
+      // Return an HTML output indicating insufficient funds
+      return HtmlService.createHtmlOutput('Insufficient Fund!').getContent();
+    }
+
+  } else {
+    // Return an HTML output indicating invalid OTP entry
+    return HtmlService.createHtmlOutput('Invalid OTP!').getContent();
+  }
+}

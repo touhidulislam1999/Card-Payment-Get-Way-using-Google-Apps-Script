@@ -1,0 +1,38 @@
+// Handles HTTP GET requests and serves the HTML file 'Front Page'
+function doGet(e) {
+  return HtmlService.createHtmlOutputFromFile('Front Page');
+}
+
+// Function to process the payment by verifying card details and sending an OTP
+function paynow(name_on_card, card_no, exp_month, exp_year, cvv) {
+  // Creates an instance of the CardClass, which likely manages card-related operations
+  const Card = CardClass();
+
+  // Retrieves saved card details from the system
+  const Saved = SavedCards(Card);
+
+  // Formats user input (e.g., converting the name on card to uppercase)
+  const Input = getUserInput(name_on_card.toUpperCase(), card_no, exp_month, exp_year, cvv);
+
+  // Accesses the user properties service to store user-specific information
+  var userProperties = PropertiesService.getUserProperties();
+
+  // Stores the card number in user properties for later use
+  userProperties.setProperty('Card_No', card_no);
+
+  // Stores the cardholder's name (converted to uppercase) in user properties
+  userProperties.setProperty('Name', name_on_card.toUpperCase());
+
+  // Verifies the card by comparing user input with saved card data
+  if (Verify_Card(Input, Saved, Card)) {
+    // Sends an OTP to the registered email for authentication
+    send_OTP('ENTER THE MAIL TO SEND OTP');
+
+    // Returns true to indicate that the OTP has been sent successfully
+    return true;
+
+  }
+  else
+    // Returns false if the card verification fails
+    return false;
+}

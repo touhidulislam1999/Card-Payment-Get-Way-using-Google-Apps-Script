@@ -1,0 +1,29 @@
+function generateCaptcha(){
+  // Generate a random number between 0 and 9 for the first operand
+  const n1 = Math.floor(Math.random() * 10);
+
+  // Generate a random number between 0 and 9 for the second operand
+  const n2 = Math.floor(Math.random() * 10);
+
+  // Define an array of possible operators for the captcha equation
+  const operators = ['+', '-', '×'];
+
+  // Select a random operator from the array
+  const operator = operators[Math.floor(Math.random() * operators.length)];
+
+  // Create an object to store the captcha components
+  var captchaData = {
+    n1: n1,         // First number
+    n2: n2,         // Second number
+    operator: operator  // Randomly selected operator
+  };
+
+  // Store captcha values in User Properties for later validation
+  var userProperties = PropertiesService.getUserProperties();
+  userProperties.setProperty('captcha_n1', n1);         // Store first number
+  userProperties.setProperty('captcha_n2', n2);         // Store second number
+  userProperties.setProperty('captcha_operator', operator); // Store operator
+
+  // Return the generated captcha data
+  return captchaData;
+}

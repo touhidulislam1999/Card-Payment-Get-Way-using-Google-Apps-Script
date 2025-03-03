@@ -1,0 +1,112 @@
+function send_OTP(mail) {
+  // Generate a One-Time Password (OTP)
+  var OTP = generate_OTP();
+  
+  // Get the current date
+  const date = new Date();
+  const day = date.getDate(); // Extract the day from the date
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = monthNames[date.getMonth()]; // Get the month in short form (Jan, Feb, etc.)
+  const year = date.getFullYear(); // Extract the year
+
+  // Create the email message (alternative text-based version)
+  var msg1 = `
+            <div style="text-align: let; font-family:Georgia,serif;">
+              <b>Dear Customer,</b><br>
+              <p></p>Greetings from Tota Bank PLC<br></p>
+              <p>Please note your One-Time Password (OTP): <b>${OTP}</b>. This OTP is valid for 1 minute. If it expires, please initiate the request again.
+                 For your security, please do not share this OTP with anyone.</p>
+              <p>For queries, you can call <b>16969</b> or check in <a href="https://touhidul.com/">www.touhidul.com</a></p>
+            </div>`;
+
+  // Create the email message (HTML formatted version)
+  var msg = `
+              <!DOCTYPE html>
+              <html lang="en">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          margin: 40px;
+                          background-color: #f9f9f9;
+                          color: #333;
+                      }
+                      .header {
+                          text-align: right;
+                          font-size: 14px;
+                          color: #333;
+                      }
+                      .otp {
+                          font-weight: bold;
+                          color: red;
+                      }
+                      .contact {
+                          margin-top: 15px;
+                          font-size: 14px;
+                      }
+                      .footer {
+                          margin-top: 20px;
+                          font-size: 14px;
+                          color: #666;
+                          border-top: 1px solid #ccc;
+                          padding-top: 10px;
+                      }
+                      .bank-name {
+                          font-weight: bold;
+                      }
+                      .disclaimer {
+                          font-size: 12px;
+                          color: #777;
+                          margin-top: 20px;
+                      }
+                  </style>
+              </head>
+              <body>
+
+                  <!-- Display the date when the email was generated -->
+                  <div class="header">
+                      <strong>Mail Generation Date:</strong> ${day}-${month}-${year}
+                  </div>
+
+                  <p><strong>Dear Customer,</strong></p>
+                  <p>Greetings from Tota Bank PLC.</p>
+
+                  <!-- Display the OTP in bold red text -->
+                  <p>Please note your One-Time Password (OTP): <span class="otp">${OTP}</span>. This OTP is valid for 1 minute. If it expires, please initiate the request again.</p>
+                  <p>For your security, please do not share this OTP with anyone.</p>
+
+                  <!-- Contact information for support -->
+                  <p class="contact">
+                      For queries, you can call <strong>+8801747107767</strong> or send an email to 
+                      <a href="mailto:abc@location.com">abc@location.com</a>.
+                  </p>
+
+                  <p>Thank you for your continual support.</p>
+
+                  <!-- Bank team signature -->
+                  <p class="bank-name">TB Direct Internet Banking Team</p>
+
+                  <p align='center'>--- Do Banking from anywhere, anytime, using TB Direct Internet Banking ---</p>
+
+                  <!-- Disclaimer about the email confidentiality -->
+                  <div class="footer">
+                      <p class="disclaimer">
+                          This email and any files transmitted with it are confidential and intended solely for the use of the individual(s) or organization to whom they are addressed. 
+                          If you are not the intended recipient(s) and have received this email in error, please notify the sender immediately and you should not disseminate, distribute, 
+                          print or copy this email or its contents or its attachment by any means.
+                      </p>
+                  </div>
+
+              </body>
+              </html>
+              `;
+
+  // Send the email with the generated OTP message
+  Send_Mail(mail, 'One Time Password (OTP) for TBL E-Commerce Transaction', msg, 'TBL ECOM OTP');
+
+  // Store the OTP in user properties for later validation
+  var userProperties = PropertiesService.getUserProperties();
+  userProperties.setProperty('otp', OTP);
+}

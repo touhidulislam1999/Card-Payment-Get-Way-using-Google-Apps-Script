@@ -1,0 +1,28 @@
+function validBalance(card_no, amount) {
+  // Open the Google Spreadsheet by its unique ID and access the sheet named "Here"
+  var sheet = SpreadsheetApp.openById("Sheet Unique Code").getSheetByName("Sheet Name");
+
+  // Access the user properties service to store and retrieve user-specific properties
+  var userProperties = PropertiesService.getUserProperties();
+
+  // Store the requested transaction amount in user properties for reference
+  userProperties.setProperty('Amount', amount);
+  
+  // Loop through each row starting from the second row (assuming first row contains headers)
+  for (var i = 2; i <= sheet.getLastRow(); i++) {
+    // Check if the card number in the current row matches the given card number
+    if (sheet.getRange(i, 1).getValue() == card_no && sheet.getRange(i, 2).getValue() > amount) {
+      // Store the current balance in user properties before deduction
+      userProperties.setProperty('Balance', sheet.getRange(i, 2).getValue());
+      
+      // Deduct the transaction amount from the balance and update the sheet
+      sheet.getRange(i, 2).setValue(sheet.getRange(i, 2).getValue() - amount);
+      
+      // Return true indicating a successful transaction
+      return true;
+    }
+  }
+  
+  // Return false if the card is not found or does not have enough balance
+  return false;
+};

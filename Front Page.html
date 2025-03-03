@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Payment Form</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <base target="_top">
+    <style>
+      /* Center the form on the page */
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-image: url('https://drive.google.com/thumbnail?id=1sTRvNRJVrDbeBdh9o6iVUKtGL53tF3EF&sz=w1920');
+        //background-image: url('https://drive.google.com/thumbnail?id=1rO5OxPgL5x6FowxNmKcyUXBgq1CUVY26&sz=w1920');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .payment-heading {
+        text-align: center;
+        color: #FFFFFF; /* White text for clarity */
+        font-size: 28px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Subtle shadow for depth */
+        padding: 10px;
+        background: linear-gradient(90deg, #0A0A23, #0044CC); /* Gradient effect */
+        border-radius: 8px; /* Rounded edges */
+        display: inline-block;
+        width: 100%;
+      }
+      label{
+        color: #FFFFFF; /* White for better readability */
+        font-weight: bold;
+        font-size: 16px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); /* Shadow for clarity */
+        margin-bottom: 5px; /* Space between label and input */
+        display: block; /* Ensures the label is on top of the input */
+      }
+      .button {
+        display: flex;
+        justify-content: right;
+        color: green;
+      }
+      .mandatory {
+        color: red;
+      }
+      .form-row{
+        margin-bottom: 20px;
+      }
+      .captcha-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .captcha-box{
+        margin: 0 5px;
+        text-aign:center;
+        font-size: 20px;
+        color: white;
+      }
+      #loading {
+        display: none;
+        margin-top: 10px;
+        text-align: center;
+        font-size: 16px;
+        color: blue;
+      }
+      .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        flex-direction: column;
+      }
+      .loader {
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .loader-text {
+        margin-top: 10px;
+        color: white;
+        font-size: 18px;
+        text-align: center;
+      }
+      .otp-input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 20px;
+        margin: 5px;
+        border: 2px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+      }
+      .otp-input:focus {
+        border-color: red;
+      }
+      .swal2-popup {
+        width: 350px;
+          border-radius: 12px;
+      }
+      .swal2-title {
+        font-size: 18px;
+      }
+      .swal2-content {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .swal2-actions {
+        justify-content: space-between;
+      }
+      .swal2-confirm {
+        background-color: gray !important;
+        border: none !important;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+      .swal2-cancel {
+        background-color: red !important;
+        border: none !important;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+      .resend-text {
+        font-size: 14px;
+        color: black;
+      }
+      .resend-text span {
+        font-weight: bold;
+        cursor: pointer;
+        color: black;
+      }          
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <body>
+    <div style="padding: 10px;">
+      <h2 class="payment-heading">Complete your Payment</h2>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-7">
+            <label for="name_on_card"><b>Name on Card</b><span class="mandatory">*</span></label>
+            <input 
+              type="text" 
+              id="name_on_card" 
+              class="form-control" 
+              placeholder="Mr. XXXX XXXX" 
+              required/>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-7">
+            <label for="card_no"><b>Card Number</b><span class="mandatory">*</span> </label>
+            <input 
+              type="text" 
+              id="card_no" 
+              class="form-control" 
+              maxlength="16"
+              pattern="\d{16}"
+              placeholder="1234 **** **** ****"
+              oninput="this.value = this.value.replace(/\D/g, '')"
+              required/>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="cvv"><b>CVV</b><span class="mandatory">*</span></label>
+            <input 
+              type="password" 
+              id="cvv" 
+              maxlength="3"
+              pattern="\d{3}"
+              class="form-control" 
+              placeholder="123"
+              oninput="this.value = this.value.replace(/\D/g, '')"
+              required/>
+          </div>  
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-5">
+            <label for="exp_month"><b>Expire Month</b><span class="mandatory">*</span></label>
+            <select 
+              id="exp_month" 
+              class="form-control" 
+              required/>
+              <option value="">Month</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="exp_year"><b>Expire Year</b><span class="mandatory">*</span></label>
+            <select 
+              id="exp_year" 
+              class="form-control" 
+              required/>
+              <option value="">Year</option>
+              <!-- Generate years dynamically -->
+              <script>
+                const currentYear = new Date().getFullYear();
+                for (let i = 0; i < 15; i++) {
+                  document.write('<option value="' + (currentYear + i) + '">' + (currentYear + i) + '</option>');
+                }
+              </script>
+            </select>
+          </div>
+        </div>
+
+        <!-- CAPTCHA Section -->
+        <div class="form-row">
+          <div class="form-group col-md-6 button">
+            <div class="captcha-container">
+              <div class="captcha-box" id="n1"></div>
+              <div class="captcha-box" id="operator"></div>
+              <div class="captcha-box" id="n2"></div>
+              <div class="captcha-box">=</div>
+              <div class="captcha-box">
+                <input 
+                  type="text" 
+                  id="captcha_answer" 
+                  class="form-control" 
+                  placeholder="Answer" 
+                  style="width: 80px;" 
+                  required />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <input 
+              type="button" 
+              value="ReCaptcha" 
+              class="btn btn-success" 
+              onclick="google.script.run.withSuccessHandler(displayCaptcha).generateCaptcha()"
+              id="add_button" />
+          </div>
+        </div>
+          
+        <div class="form-row">
+          <div class="form-group col-md-7 button">
+            <input 
+              type="button" 
+              value="Pay Now" 
+              class="btn btn-success" 
+              onclick="paynow()" 
+              id="pay_button" />
+          </div>
+        </div>
+        <div 
+          id="display_error" 
+          style="color: red" 
+          align='center'>
+        </div>
+      </form> 
+      <div 
+        id="result" 
+        style="padding: 10px;" 
+        align='center'>
+      </div>
+    </div>
+    <!-- Popup Loader -->
+    <div class="loader-overlay" id="loaderOverlay">
+      <div class="loader"></div>
+      <div class="loader-text">Verifying Card Details...</div>
+    </div>
+    <div class="loader-overlay" id="loaderOverlay2">
+      <div class="loader"></div>
+      <div class="loader-text">Verifying OTP...</div>
+    </div>
+    <script>
+      const loading = document.getElementById("loaderOverlay");
+      const loading2 = document.getElementById("loaderOverlay2");
+      const payButton = document.getElementById("pay_button");
+      let otpPopouOpen = false;
+      let otpTimer;
+      let otpTimeLeft = 60;
+
+      setTimeout(() => {
+        document.getElementById('otp-timer').innerText = `Time remaining: ${otpTimeLeft}s`;
+      }, 0);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const payButton = document.getElementById("pay_button");
+        const inputs = ["name_on_card", "card_no", "exp_month", "exp_year", "cvv", "captcha_answer"];
+        
+        // Function to check if all form fields are filled and valid
+        function checkFormCompletion() {
+          const isValid = inputs.every(id => {
+            const field = document.getElementById(id);
+            return field && field.value.trim() !== "" && field.checkValidity();
+          });
+          payButton.disabled = !isValid; // Disable or enable the pay button based on validation
+        }
+
+        // Add input event listeners to form fields to trigger validation
+        inputs.forEach(id => {
+          document.getElementById(id).addEventListener("input", checkFormCompletion);
+        });
+
+        checkFormCompletion(); // Initial validation check
+      });
+
+      // Function to start payment process
+      function paynow() {
+        validateCaptcha(); // Validate CAPTCHA before proceeding
+        document.getElementById("loaderOverlay").style.display = "flex";
+      }
+
+
+      // Generate a CAPTCHA when the page loads
+      window.onload = function() {
+        google.script.run.withSuccessHandler(displayCaptcha).generateCaptcha();
+      };
+
+      // Display the generated CAPTCHA on the UI
+      function displayCaptcha(captchaData) {
+        document.getElementById("n1").innerText = captchaData.n1;
+        document.getElementById("n2").innerText = captchaData.n2;
+        document.getElementById("operator").innerText = captchaData.operator;
+      }
+
+      // Function to validate the CAPTCHA before payment
+      function validateCaptcha() {
+        const captchaAnswer = document.getElementById("captcha_answer").value;
+
+        // Run validateCaptcha function from the Google Apps Script backend
+        google.script.run.withSuccessHandler(function(isValid){
+          if (isValid) {
+            loading.style.display = "flex";
+            // Proceed with payment if CAPTCHA is valid
+            google.script.run.withSuccessHandler(function(verificationResult) {
+              loading.style.display = "none"; // Hide loading spinner
+              if (verificationResult)
+                triggerOtpPopup(); // Show OTP pop-up if verification is successful
+              else
+                document.getElementById("display_error").innerHTML = "Card verification failed. Please try again!";
+            }).paynow(
+              document.getElementById("name_on_card").value,
+              document.getElementById("card_no").value,
+              document.getElementById("exp_month").value,
+              document.getElementById("exp_year").value,
+              document.getElementById("cvv").value
+            );
+          } else {
+              loading.style.display = "none"; // Hide loading spinner if CAPTCHA fails
+              document.getElementById("display_error").innerHTML = "CAPTCHA validation failed. Try again!";
+            }
+        }).validateCaptcha(captchaAnswer)
+      }
+
+      // Function to display the OTP input pop-up using SweetAlert
+      function Call_Swall(otpTimeLeft,otpTimer){
+        Swal.fire({
+          title: "OTP has been sent to your registered email.",
+          text: "Pleae enter the OTP below",
+          html: `
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                    <input 
+                      type="text" 
+                      id="otp1" 
+                      class="otp-input" 
+                      maxlength="1" 
+                      oninput="validateAndMove(this, 'otp2')"
+                    >
+                    <input 
+                      type="text" 
+                      id="otp2" 
+                      class="otp-input" 
+                      maxlength="1" 
+                      oninput="validateAndMove(this, 'otp3')"
+                    >
+                    <input 
+                      type="text" 
+                      id="otp3"  
+                      class="otp-input" 
+                      maxlength="1" 
+                      oninput="validateAndMove(this, 'otp4')"
+                    >
+                    <input 
+                      type="text" 
+                      id="otp4" 
+                      class="otp-input" 
+                      maxlength="1" 
+                      oninput="validateAndMove(this, null)"
+                    >
+                </div>
+                <p 
+                  id="otp-timer">
+                  Time remaining: ${otpTimeLeft}s
+                </p>
+                <p 
+                  class="resend-text" 
+                  id="resend-otp" 
+                  style="display:none;">
+                  Didn't receive the OTP? 
+                  <span 
+                    onclick="Send_OTP()">Resend OTP
+                  </span>
+                </p>
+              `,
+          showCancelButton: true,
+          canceButtonText: "Cancel",
+          confirmButtonText: "Next",
+          didOpen: () => {
+            document.getElementById("otp1").focus();
+            ["otp1", "otp2", "otp3", "otp4"].forEach(id => {
+              document.getElementById(id).addEventListener("input", checkOtpFilled);
+            });
+            startOtpTimer();
+          },
+          preConfirm: () => {
+            loading2.style.display = "flex"; // Show second loading spinner
+            const otp = ["otp1", "otp2", "otp3", "otp4"].map(id => document.getElementById(id).value).join("");
+            if (otp.length < 4)
+              loading2.style.display = "none"; // Hide loading if OTP is not complete
+            return otp;
+          },
+          allowOutsideClick: false,
+          allowEscapeKey: false
+        }).then((result) => {
+          if(result.isConfirmed)
+            verify_otp(result.value); // Verify OTP if confirmed
+        });
+      }
+
+      // Function to trigger OTP pop-up
+      function triggerOtpPopup(){
+        otpTimeLeft = otpTimeLeft;
+        clearInterval(otpTimer);
+        otpPopouOpen = true;
+        Call_Swall(otpTimeLeft,otpTimer);
+      }
+      
+      // Function to start the OTP countdown timer
+      function startOtpTimer(){
+        otpTimer = setInterval(() => {
+          otpTimeLeft--;
+          const otpTimerElement = document.getElementById("otp-timer");
+          if(otpTimerElement)
+            otpTimerElement.innerText = `Time Remaining: ${otpTimeLeft}s`;
+          if(otpTimeLeft <= 0){
+            clearInterval(otpTimer);
+            document.querySelector(".swal2-confirm").disabled = true;
+            document.getElementById("resend-otp").style.display = "block"; // Show resend OTP option
+          }
+        },1000);
+      }
+
+      // Function to resend OTP and restart the timer
+      function Send_OTP() {
+        google.script.run.send_OTP('YOUR MAIL'); // Enter your mail to resend otp.
+        otpTimeLeft = 60;
+        clearInterval(otpTimer);
+        startOtpTimer();
+        document.querySelector(".swal2-confirm").disabled = false;
+        document.getElementById("resend-otp").style.display = "none";
+        alert("A new OTP has been sent to your registered email.");
+        Call_Swall(otpTimeLeft,otpTimer);
+      }
+
+      // Function to verify the OTP entered by the user
+      function verify_otp(otp){
+        google.script.run.withSuccessHandler(function(verificationResult) {
+          loading2.style.display = "none"; // Hide loading spinner
+          // Statement
+          if(verificationResult == true){
+            Swal.fire("Payment Successful!","Your card has been successfully charged!","success");
+            clearInterval(otpTimer);
+            otpTimeLeft = 60;
+            clearFormInputs();
+            regenerateCaptcha();
+          }
+          else if(verificationResult == "Invalid OTP!"){
+            alert("Invalid OTP...Enter a valid OTP!");
+            triggerOtpPopup();
+            clearOtpFields();
+            document.getElementById("otp1").focus();
+          }
+          else if(verificationResult == "Insufficient Fund!")
+            Swal.fire("Insufficient Fund!","Not enough fund to complete the payment","error");
+          else{
+            const otpErrorElement = document.getElementById("otp-error");
+            if(otpErrorElement){
+              alert("There was an error while processing...");
+              otpErrorElement.style.display = "block";
+            }
+          }
+        }).verify_otp(otp);
+      }
+
+      // Function to validate OTP inputs and move focus to next field
+      function validateAndMove(current, nextId) {
+        current.value = current.value.replace(/\D/g, '');
+        if (current.value.length === 1 && nextId)
+          document.getElementById(nextId).focus();
+        checkOtpFilled();    
+      }
+
+      // Function to clear form fields after submission
+      function clearFormInputs(){
+        ["name_on_card", "card_no", "exp_month", "exp_year", "cvv", "captcha_answer"].forEach(id => {
+          document.getElementById(id).value = "";
+        });
+      }
+
+      // Function to clear input OTP
+      function clearOtpFields() {
+        ["otp1", "otp2", "otp3", "otp4"].forEach(id => {
+          document.getElementById(id).value = "";
+          });
+      }
+
+      // Function to regenerate CAPTCHA
+      function regenerateCaptcha(){
+        google.script.run.withSuccessHandler(displayCaptcha).generateCaptcha();
+      }
+
+      function checkOtpFilled() {
+        // Retrieve the values entered in the OTP input fields
+        const otp1 = document.getElementById("otp1").value;
+        const otp2 = document.getElementById("otp2").value;
+        const otp3 = document.getElementById("otp3").value;
+        const otp4 = document.getElementById("otp4").value;
+            
+        // Select the confirmation button inside the SweetAlert2 popup
+        const confirmButton = document.querySelector(".swal2-confirm");
+
+        // Enable the confirm button only if all OTP fields are filled
+        confirmButton.disabled = !(otp1 && otp2 && otp3 && otp4);
+      }
+
+      function displayResult(result) {
+        loading2.style.display = "none"; // Hide the loading spinner after receiving the result
+        if (result == false) { 
+          // Check if the result indicates an invalid card
+          document.getElementById('result').innerHTML = "Invalid Card Details!"; // Display an error message
+          document.getElementById('result').style.color = "red"; // Set the text color to red for visibility
+        } else {
+          // If the result is valid
+          document.open(); // Open the document stream
+          document.write(result); // Write the result directly to the document (possibly an HTML page)
+          document.close(); // Close the document stream to finalize rendering
+        }
+      }
+    </script>
+  </body>
+</html>
